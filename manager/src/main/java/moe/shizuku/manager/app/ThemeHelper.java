@@ -14,6 +14,10 @@ public class ThemeHelper {
 
     private static final String THEME_DEFAULT = "DEFAULT";
     private static final String THEME_BLACK = "BLACK";
+    private static final String THEME_PINK = "PINK";
+    private static final String THEME_TEAL = "TEAL";
+    private static final String THEME_PURPLE = "PURPLE";
+    private static final String THEME_AMBER = "AMBER";
 
     public static final String KEY_LIGHT_THEME = "light_theme";
     public static final String KEY_BLACK_NIGHT_THEME = "black_night_theme";
@@ -29,10 +33,15 @@ public class ThemeHelper {
     }
 
     public static String getTheme(Context context) {
-        if (isBlackNightTheme(context)
-                && ResourceUtils.isNightMode(context.getResources().getConfiguration()))
-            return THEME_BLACK;
+        // Dynamic system colors take priority on Android 12+ if enabled
+        if (isUsingSystemColor()) {
+            if (isBlackNightTheme(context) && ResourceUtils.isNightMode(context.getResources().getConfiguration())) {
+                return THEME_BLACK;
+            }
+            return THEME_DEFAULT;
+        }
 
+        // Return user selected custom theme
         return ShizukuSettings.getPreferences().getString(KEY_LIGHT_THEME, THEME_DEFAULT);
     }
 
@@ -41,9 +50,18 @@ public class ThemeHelper {
         switch (getTheme(context)) {
             case THEME_BLACK:
                 return R.style.ThemeOverlay_Black;
+            case THEME_PINK:
+                return R.style.ThemeOverlay_Pink;
+            case THEME_TEAL:
+                return R.style.ThemeOverlay_Teal;
+            case THEME_PURPLE:
+                return R.style.ThemeOverlay_Purple;
+            case THEME_AMBER:
+                return R.style.ThemeOverlay_Amber;
             case THEME_DEFAULT:
             default:
                 return R.style.ThemeOverlay;
         }
     }
 }
+
